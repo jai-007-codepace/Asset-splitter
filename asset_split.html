@@ -1112,93 +1112,11 @@
       </div>
     </div>
 
-    <!-- Printable settlement sheet -->
-    <div class="panel print-only" style="margin-top: 6px">
-      <div class="panel-header">
-        <div class="panel-title">
-          <i class="fa-solid fa-file-lines"></i>
-          Settlement Sheet
-        </div>
-      </div>
-      <div class="card">
-        <div
-          style="
-            display: flex;
-            justify-content: space-between;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin-bottom: 5px;
-          "
-        >
-          <div>
-            <div class="summary-small-label">Pool</div>
-            <div class="summary-value summary-value-blue" id="printPool">
-              ₹ 0
-            </div>
-          </div>
-          <div>
-            <div class="summary-small-label">Jai net</div>
-            <div class="summary-value summary-value-green" id="printJaiNet">
-              ₹ 0
-            </div>
-          </div>
-          <div>
-            <div class="summary-small-label">JS net</div>
-            <div class="summary-value summary-value-green" id="printJaishNet">
-              ₹ 0
-            </div>
-          </div>
-          <div>
-            <div class="summary-small-label">Share J / JS</div>
-            <div class="summary-value" id="printShare">-- % / -- %</div>
-          </div>
-        </div>
 
-        <hr
-          style="border: none; border-top: 1px solid #e5e7eb; margin: 5px 0"
-        />
-
-        <div style="font-size: 11px; font-weight: 700; margin-bottom: 4px">
-          Historic components:
-          <span id="printAdjTotal">₹ 0</span>
-        </div>
-        <table
-          style="
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 10px;
-          "
-        >
-          <thead>
-            <tr>
-              <th
-                style="
-                  text-align: left;
-                  padding: 3px 4px;
-                  background: #e0edff;
-                "
-              >
-                Item
-              </th>
-              <th
-                style="
-                  text-align: right;
-                  padding: 3px 4px;
-                  background: #e0edff;
-                "
-              >
-                Today
-              </th>
-            </tr>
-          </thead>
-          <tbody id="printAdjTableBody"></tbody>
-        </table>
-      </div>
-    </div>
 
     <div class="footer-note">
       <i class="fa-solid fa-circle-info"></i>
-      Order: KPIs → Assets → Historic → Jai split → JS split. Gold/Land use
+      KPIs → Assets → Historic → Jai split → JS split. Gold/Land use
       fixed qty; flats in Lakhs. Inputs are large &amp; easy to tap. (Note:
       Some mobile browsers ignore background colors when printing.)
     </div>
@@ -1701,48 +1619,7 @@
         `
       );
 
-      // Printable sheet
-      $("#printPool").text(fmtMoney(pool));
-      $("#printJaiNet").text(fmtMoney(jaiTotal));
-      $("#printJaishNet").text(fmtMoney(jaishTotal));
-      $("#printShare").text(
-        jaiPctNet.toFixed(1) + "% / " + jaishPctNet.toFixed(1) + "%"
-      );
-      $("#printAdjTotal").text(fmtMoney(historicTotalAll));
-      $("#printAdjTableBody").html(
-        `
-          <tr>
-            <td style="padding:3px 4px;">Parents</td>
-            <td style="padding:3px 4px;text-align:right;">${fmtMoney(
-              marriageParents
-            )}</td>
-          </tr>
-          <tr>
-            <td style="padding:3px 4px;">Jai loan</td>
-            <td style="padding:3px 4px;text-align:right;">${fmtMoney(
-              marriageJai
-            )}</td>
-          </tr>
-          <tr>
-            <td style="padding:3px 4px;">Medical</td>
-            <td style="padding:3px 4px;text-align:right;">${fmtMoney(
-              medicalJai
-            )}</td>
-          </tr>
-          <tr>
-            <td style="padding:3px 4px;">Apt help</td>
-            <td style="padding:3px 4px;text-align:right;">${fmtMoney(
-              aptHelp
-            )}</td>
-          </tr>
-          <tr>
-            <td style="padding:3px 4px;">House 2012</td>
-            <td style="padding:3px 4px;text-align:right;">${fmtMoney(
-              houseHelp
-            )}</td>
-          </tr>
-        `
-      );
+
 
       $("#lastUpdated").text(new Date().toLocaleString());
     }
