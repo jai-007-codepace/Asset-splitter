@@ -1,1 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Family Asset Split – Mobile</title>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  />
+
+  <!-- Nunito font -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --blue-main: #2563eb;
+      --green-main: #16a34a;
+      --red-main: #dc2626;
+      --gray-soft: #6b7280;
+      --border-soft: #e5e7eb;
+      --card-radius: 8px;
+      --shadow-soft: 0 4px 14px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Nunito", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      font-size: 13px;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 8px auto 12px;
+      padding: 10px 10px 14px;
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    h1 i {
+      color: var(--blue-main);
+      font-size: 16px;
+    }
+
+    .subtitle {
+      font-size: 10px;
+      color: var(--gray-soft);
+    }
+
+    .topbar-right {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      color: var(--gray-soft);
+      margin-top: 4px;
+    }
+
+    .topbar-right .last-updated strong {
+      color: #111827;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border: 1px solid var(--border-soft);
+      gap: 3px;
+      background: #edf2ff;
+      color: #4b5563;
+    }
+
+    .badge i {
+      font-size: 9px;
+    }
+
+    .badge-info {
+      color: #1d4ed8;
+    }
+
+/* Base professional button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #d1d5db;            /* subtle neutral border */
+  background: #ffffff;                  /* clean white */
+  color: #374151;                       /* neutral dark */
+  transition: background 0.15s ease,
+              border-color 0.15s ease,
+              color 0.15s ease,
+              box-shadow 0.15s ease;
+}
+
+/* Hover: subtle gray background, no childish glow */
+.btn:hover {
+  background: #f3f4f6;
+  border-color: #cdd3d9;
+}
+
+/* Active click */
+.btn:active {
+  background: #e5e7eb;
+  border-color: #c5cbd3;
+}
+
+/* Ghost button (for lightweight ones) */
+.btn-ghost {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+.btn-ghost:hover {
+  background: #f3f4f6;
+  border-color: #d5d9df;
+}
+
+/* ACTIVE / SELECTED state */
+.btn-active {
+  background: #2563eb;       /* primary blue */
+  color: #ffffff;
+  border-color: #1d4ed8;
+}
+
+.btn-active:hover {
+  background: #1e4ed8;
+  border-color: #1c45c5;
+}
+
+
+    /* Panels */
+    .panel {
+      border-radius: 10px;
+      padding: 8px 8px 8px;
+      margin-bottom: 8px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .panel-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .panel-title i {
+      color: var(--blue-main);
+      font-size: 12px;
+    }
+
+    /* Cards */
+    .card {
+      border-radius: var(--card-radius);
+      padding: 7px 9px 7px;
+      border: 1px solid var(--border-soft);
+      background: #ffffff;
+      color: #111827;
+      font-size: 11px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .primary-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .primary-row .card {
+      width: 100%;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2px;
+      gap: 4px;
+    }
+
+    .card-title {
+      font-size: 9px;
+      text-transform: uppercase;
+      color: #4b5563;
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+    }
+
+    .card-title i {
+      color: var(--blue-main);
+      font-size: 9px;
+    }
+
+    .kpi-primary {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      line-height: 1.1;
+    }
+
+    .kpi-secondary {
+      font-size: 9px;
+      color: #6b7280;
+      margin-top: 1px;
+    }
+
+    .value-green {
+      color: var(--green-main);
+    }
+
+    .value-red {
+      color: var(--red-main);
+    }
+
+    .value-blue {
+      color: var(--blue-main);
+    }
+
+    /* Table wrapper for mobile scroll */
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .table-wrapper::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb {
+      background: #e5e7eb;
+      border-radius: 999px;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 3px;
+      font-size: 10px;
+      background: #ffffff;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 5px 6px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #e0edff;
+      color: #1f2937;
+      font-weight: 600;
+      font-size: 10px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:nth-child(even) td {
+      background: #f9fafb;
+    }
+
+    .asset-cell {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 130px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .asset-cell div:first-child {
+      flex-shrink: 0;
+    }
+
+    .asset-name {
+      font-weight: 700;
+      font-size: 12px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .asset-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f172a;
+      font-size: 11px;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.15);
+      flex-shrink: 0;
+    }
+
+    .icon-gold {
+      background: linear-gradient(135deg, #fef3c7, #fbbf24);
+    }
+
+    .icon-flat {
+      background: linear-gradient(135deg, #bfdbfe, #60a5fa);
+    }
+
+    .icon-land {
+      background: linear-gradient(135deg, #bbf7d0, #34d399);
+    }
+
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      padding: 6px 7px;
+      border-radius: 7px;
+      border: 1px solid var(--border-soft);
+      background: #f9fafb;
+      color: #111827;
+      font-size: 11px;
+      font-weight: 600;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      transition: border-color 0.1s ease, box-shadow 0.1s ease,
+        background 0.1s ease;
+    }
+
+    input[type="number"]:hover,
+    input[type="text"]:hover {
+      border-color: #d0d7ff;
+    }
+
+    input[type="number"]:focus,
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--blue-main);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+      background: #ffffff;
+    }
+
+    /* Shorter rate/value input fields */
+    .rate-input,
+    .valL-input {
+      width: 70px !important;
+      padding: 6px 4px !important;
+      font-size: 12px !important;
+    }
+
+    .pct-input,
+    .pct-s {
+      max-width: 64px;
+    }
+
+    .table-actions .btn {
+      padding: 3px 6px;
+      font-size: 10px;
+      box-shadow: none;
+    }
+
+    .table-actions .btn i {
+      font-size: 10px;
+    }
+
+    /* Person cards */
+    .person-card {
+      border-radius: 9px;
+      padding: 7px 8px 8px;
+      border: 1px solid var(--border-soft);
+      background: #ffffff;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .person-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 11px;
+      gap: 4px;
+    }
+
+    .person-header .who {
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .person-header .who i {
+      font-size: 10px;
+    }
+
+    .person-header .gross {
+      font-size: 11px;
+      color: #111827;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .historic-caption {
+      font-size: 9px;
+      color: #9ca3af;
+      margin-top: -1px;
+      margin-bottom: 2px;
+    }
+
+    .person-list {
+      flex: 1;
+      padding: 3px;
+      border-radius: 6px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      overflow-y: visible;
+    }
+
+    .person-list li {
+      display: flex;
+      align-items: baseline;
+      padding: 2px 2px;
+      border-bottom: 1px dashed rgba(148, 163, 184, 0.35);
+      font-size: 11px;
+      gap: 4px;
+    }
+
+    .person-list li:last-child {
+      border-bottom: none;
+    }
+
+    .person-list li span:first-child {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .person-list li span:last-child {
+      margin-left: 6px;
+      font-weight: 700;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .person-list li.historic-item {
+      color: #111827;
+      background: #eef2ff;
+    }
+
+    .person-list li.historic-header {
+      color: #1d4ed8;
+      font-weight: 800;
+      background: transparent;
+      border-bottom: none;
+      padding-top: 3px;
+    }
+
+    .share-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      color: var(--gray-soft);
+      margin-top: 3px;
+    }
+
+    .share-bar {
+      flex: 1;
+      height: 7px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+    }
+
+    .share-fill-jai,
+    .share-fill-jaish {
+      height: 100%;
+      border-radius: 999px;
+      width: 50%;
+    }
+
+    .share-fill-jai {
+      background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    }
+
+    .share-fill-jaish {
+      background: linear-gradient(90deg, #16a34a, #4ade80);
+    }
+
+    .share-pct {
+      min-width: 42px;
+      text-align: right;
+      font-weight: 800;
+      color: #111827;
+      font-size: 11px;
+    }
+
+    .net-row-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 11px;
+      margin-top: 3px;
+    }
+
+    .net-row-card .label-strong {
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .amount-primary {
+      font-weight: 800;
+      font-size: 13px;
+      text-align: right;
+    }
+
+    /* Historic config small table */
+    .hist-config {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 4px;
+      font-size: 10px;
+    }
+
+    .hist-config th,
+    .hist-config td {
+      padding: 3px 3px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .hist-config th:first-child,
+    .hist-config td:first-child {
+      text-align: left;
+    }
+
+    .hist-config input[type="number"] {
+      width: 100%;
+      padding: 4px 4px;
+      font-size: 10px;
+      border-radius: 5px;
+    }
+
+    .summary-small-label {
+      font-size: 10px;
+      color: var(--gray-soft);
+    }
+
+    .summary-value {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .summary-value-blue {
+      color: var(--blue-main);
+    }
+
+    .summary-value-green {
+      color: var(--green-main);
+    }
+
+    .muted {
+      color: var(--gray-soft);
+      font-size: 9px;
+    }
+
+    .footer-note {
+      margin-top: 6px;
+      font-size: 9px;
+      color: var(--gray-soft);
+      border-top: 1px solid #e5e7eb;
+      padding-top: 5px;
+      line-height: 1.4;
+    }
+
+    .footer-note i {
+      color: var(--blue-main);
+      margin-right: 3px;
+    }
+
+    /* Top actions (quick split + presets + print/random) */
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+      margin-left: 0;
+      margin-top: 4px;
+      overflow-x: visible;
+      padding-bottom: 0;
+    }
+
+    .top-actions .btn {
+      padding: 4px 7px;
+      font-size: 10px;
+      white-space: nowrap;
+      box-shadow: none;
+    }
+
+    /* Config banner */
+    .config-banner {
+      margin-top: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
+      font-size: 10px;
+    }
+
+    .config-banner-label {
+      color: var(--gray-soft);
+    }
+
+    .config-banner-value {
+      font-weight: 700;
+      color: #1d4ed8;
+    }
+
+    .no-print {
+    }
+
+    .print-only {
+      display: none;
+    }
+
+    /* Print: compact, with colors where the browser allows */
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      body {
+        background: #ffffff;
+        font-size: 10px;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .container {
+        box-shadow: none;
+        border: none;
+        margin: 0;
+        max-width: 100%;
+        padding: 6px 8px;
+      }
+
+      .panel,
+      .card,
+      .person-card,
+      .primary-row,
+      .footer-note {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      table {
+        page-break-inside: auto;
+      }
+
+      tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+      }
+
+      .print-only {
+        display: block !important;
+        break-before: page;
+        page-break-before: always;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="topbar">
+      <div>
+        <h1>
+          <i class="fa-solid fa-chart-pie"></i>
+          Family Asset Split
+        </h1>
+        <div class="subtitle">
+          Mobile-friendly view for Jai / Jaishree split &amp; historic items.
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="last-updated">
+          <i class="fa-regular fa-clock"></i>
+          <span style="font-size: 9px">Updated:</span>
+          <strong id="lastUpdated">--</strong>
+        </div>
+
+        <div class="top-actions no-print">
+          <!-- Quick splits -->
+          <!--<button id="assignHalf" class="btn btn-ghost">50/50</button>-->
+          <button id="assignAllJai" class="btn btn-ghost">All J</button>
+          <button id="assignAllJaish" class="btn btn-ghost">All JS</button>
+
+          <!-- JS presets -->
+          <button class="btn btn-ghost preset-btn" data-code="J1">JS Jew</button>
+          <button class="btn btn-ghost preset-btn" data-code="J2">JS Jew+A</button>
+          <button class="btn btn-ghost preset-btn" data-code="J3">JS Jew+1P</button>
+          <button class="btn btn-ghost preset-btn" data-code="J4">JS Jew+2P</button>
+          <button class="btn btn-ghost preset-btn" data-code="J5">JS J50+A</button>
+          <button class="btn btn-ghost preset-btn" data-code="J6">JS J50+1P</button>
+          <button class="btn btn-ghost preset-btn" data-code="J7">JS J50+2P</button>
+
+          <!-- Print / random -->
+          <button
+            id="btnPrint"
+            class="btn btn-ghost"
+            title="Print or save as PDF"
+          >
+            <i class="fa-solid fa-print"></i>
+            Print
+          </button>
+          <button
+            id="shuffle"
+            class="btn btn-ghost"
+            title="Shuffle proportions"
+          >
+            <i class="fa-solid fa-dice"></i>
+            Rand
+          </button>
+        </div>
+      </div>
+
+      <!-- Config banner -->
+      <div class="config-banner">
+        <span class="config-banner-label">Config:</span>
+        <span id="configLabel" class="config-banner-value">Custom setup</span>
+        <label style="display:inline-flex;align-items:center;gap:6px;margin-left:8px;font-size:11px;color:var(--gray-soft);">
+          <input id="includeHistoric" type="checkbox" checked />
+          <span style="font-weight:700;color:#0f172a;font-size:11px;">Include historic</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- 1) Top KPIs -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i class="fa-solid fa-gauge-high"></i>
+          KPIs
+        </div>
+        <span class="badge badge-info">
+          <i class="fa-solid fa-scale-balanced"></i>
+          Net = Assets + Hist
+        </span>
+      </div>
+
+      <div class="primary-row">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-vault"></i>
+              Pool
+            </div>
+          </div>
+          <div class="kpi-primary value-blue" id="pool">₹ 0</div>
+          <div class="kpi-secondary">Sum of 5 assets</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-user"></i>
+              Jai Net
+            </div>
+          </div>
+          <div class="kpi-primary value-green" id="jaiNetKpi">₹ 0</div>
+          <div class="kpi-secondary">Assets + hist (−)</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-user"></i>
+              JS Net
+            </div>
+          </div>
+          <div class="kpi-primary value-green" id="jaishNetKpi">₹ 0</div>
+          <div class="kpi-secondary">Assets + hist (+)</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-scale-balanced"></i>
+              Share J/JS
+            </div>
+          </div>
+          <div class="kpi-primary value-blue" id="shareKpi">
+            50.0% / 50.0%
+          </div>
+          <div class="kpi-secondary">Based on net totals</div>
+        </div>
+
+        <!-- NEW: separate transfer cards -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-divide"></i> Asset transfer</div>
+          </div>
+          <div class="kpi-primary" id="assetTransferKpi">—</div>
+          <div class="kpi-secondary">Cash to equalize asset-only split</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-history"></i> Historic transfer</div>
+          </div>
+          <div class="kpi-primary" id="historicTransferKpi">—</div>
+          <div class="kpi-secondary">Net historic settlement (if included)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2) Asset inputs -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i class="fa-solid fa-layer-group"></i>
+          Assets
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table aria-label="Assets table">
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th style="width: 90px">Rate / Val</th>
+              <th style="width: 60px">J%</th>
+              <th style="width: 60px">JS%</th>
+              <th style="width: 60px"></th>
+            </tr>
+          </thead>
+          <tbody id="assetRows"></tbody>
+        </table>
+      </div>
+
+      <div class="muted" style="margin-top: 3px">
+        Gold: 90s × rate/sov. Land: 1700 sqft × rate. Flats: value in Lakhs.
+      </div>
+    </div>
+
+    <!-- 3) Historic components -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i class="fa-solid fa-receipt"></i>
+          Historic
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;">
+          <div>
+            <div class="summary-small-label">Total (5 items)</div>
+            <div class="summary-value summary-value-green" id="famAdj">₹ 0</div>
+          </div>
+          <div style="text-align:right">
+            <div class="summary-small-label">Inflation % p.a.</div>
+            <div>
+              <input type="number" id="inflationRate" value="4" step="0.1" style="width:60px;font-size:10px" />%
+            </div>
+          </div>
+        </div>
+
+        <div class="summary-small-label" style="margin-top:3px">Base × (1+rate)^years. Jai has − rows, JS has + credits.</div>
+
+        <table class="hist-config">
+          <thead>
+            <tr><th>Item</th><th>Base</th><th>Yrs</th><th>Today</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Parents</td>
+              <td><input type="number" class="hist-base" id="baseParents" value="1279000" /></td>
+              <td><input type="number" class="hist-years" id="yearsParents" value="6" /></td>
+              <td id="todayParents">₹ 0</td>
+            </tr>
+            <tr>
+              <td>Jai loan</td>
+              <td><input type="number" class="hist-base" id="baseJaiLoan" value="820000" /></td>
+              <td><input type="number" class="hist-years" id="yearsJaiLoan" value="6" /></td>
+              <td id="todayJaiLoan">₹ 0</td>
+            </tr>
+            <tr>
+              <td>Medical</td>
+              <td><input type="number" class="hist-base" id="baseMedical" value="500000" /></td>
+              <td><input type="number" class="hist-years" id="yearsMedical" value="3" /></td>
+              <td id="todayMedical">₹ 0</td>
+            </tr>
+            <tr>
+              <td>Apt help</td>
+              <td><input type="number" class="hist-base" id="baseApt" value="200000" /></td>
+              <td><input type="number" class="hist-years" id="yearsApt" value="13" /></td>
+              <td id="todayApt">₹ 0</td>
+            </tr>
+            <tr>
+              <td>House 2012</td>
+              <td><input type="number" class="hist-base" id="baseHouse" value="400000" /></td>
+              <td><input type="number" class="hist-years" id="yearsHouse" value="13" /></td>
+              <td id="todayHouse">₹ 0</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div id="famAdjBreak" style="margin-top:5px;font-size:9px;color:#4b5563;line-height:1.4"></div>
+      </div>
+    </div>
+
+    <!-- 4) Jai split up -->
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title"><i class="fa-solid fa-user"></i> Jai split</div></div>
+      <div class="person-card" id="jaiCard">
+        <div class="person-header">
+          <div class="who" style="color:var(--blue-main)"><i class="fa-solid fa-user"></i> Jai</div>
+          <div class="gross" id="jaiGross">₹ 0</div>
+        </div>
+        <div class="historic-caption">Assets (+) then historic (−).</div>
+        <ul id="jaiList" class="person-list"></ul>
+        <div class="share-row">
+          <span>Net share</span>
+          <div class="share-bar"><div class="share-fill-jai"></div></div>
+          <span class="share-pct" id="jaiPct">50%</span>
+        </div>
+        <div class="net-row-card"><span class="label-strong">Net Jai</span><span class="amount-primary" id="jaiNet">₹ 0</span></div>
+      </div>
+    </div>
+
+    <!-- 5) Jaishree split up -->
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title"><i class="fa-solid fa-user"></i> JS split</div></div>
+      <div class="person-card" id="jaishCard">
+        <div class="person-header">
+          <div class="who" style="color:var(--green-main)"><i class="fa-solid fa-user"></i> Jaishree</div>
+          <div class="gross" id="jaishGross">₹ 0</div>
+        </div>
+        <div class="historic-caption">Assets (+) then historic credits (+).</div>
+        <ul id="jaishList" class="person-list"></ul>
+        <div class="share-row">
+          <span>Net share</span>
+          <div class="share-bar"><div class="share-fill-jaish"></div></div>
+          <span class="share-pct" id="jaishPct">50%</span>
+        </div>
+        <div class="net-row-card"><span class="label-strong">Net JS</span><span class="amount-primary" id="jaishNet">₹ 0</span></div>
+      </div>
+    </div>
+
+    <!-- NEW: Historic summary card at the end for quick reference -->
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title"><i class="fa-solid fa-clock-rotate-left"></i> Historic summary</div></div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+          <div>
+            <div class="summary-small-label">Historic total</div>
+            <div class="summary-value summary-value-green" id="famAdjEnd">₹ 0</div>
+          </div>
+          <div style="text-align:right;min-width:120px;">
+            <div class="summary-small-label">Rate used</div>
+            <div id="famRateUsed" class="muted">—</div>
+          </div>
+        </div>
+        <div style="margin-top:8px;font-size:12px;color:#374151;">
+          <div id="famAdjBreakEnd"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-note"><i class="fa-solid fa-circle-info"></i> KPIs → Assets → Historic → Jai split → JS split. Gold/Land use fixed qty; flats in Lakhs. Inputs are large &amp; easy to tap.</div>
+  </div>
+
+  <script>
+    // Helpers
+    function fmtMoney(n) {
+      if (!isFinite(n)) return "₹ 0";
+      const abs = Math.abs(n);
+      if (abs >= 100000) return "₹ " + (n / 100000).toFixed(2) + " L";
+      return "₹ " + Number(Math.round(n)).toLocaleString("en-IN");
+    }
+
+    function esc(s) {
+      return String(s).replace(/[&<>'\"]/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      })[c]);
+    }
+
+    // Config state
+    let currentConfig = "CUSTOM";
+
+    const CONFIG_LABELS = {
+      Q1: "50/50 split",
+      Q2: "All to Jai",
+      Q3: "All to JS",
+      J1: "JS: Jewels",
+      J2: "JS: Jewels + Apt",
+      J3: "JS: Jewels + 1 plot",
+      J4: "JS: Jewels + 2 plots",
+      J5: "JS: Jewels 50% + Apt",
+      J6: "JS: Jewels 50% + 1 plot",
+      J7: "JS: Jewels 50% + 2 plots",
+      CUSTOM: "Custom setup",
+    };
+
+    function setConfig(code) {
+      currentConfig = code || "CUSTOM";
+      const label = CONFIG_LABELS[currentConfig] || "Custom setup";
+      $("#configLabel").text(label);
+      $(".top-actions .btn").removeClass("btn-active");
+      if (code === "Q1") $("#assignHalf").addClass("btn-active");
+      else if (code === "Q2") $("#assignAllJai").addClass("btn-active");
+      else if (code === "Q3") $("#assignAllJaish").addClass("btn-active");
+      else if (code && code.startsWith("J")) $(`.preset-btn[data-code="${code}"]`).addClass("btn-active");
+    }
+
+    function markCustomConfig() { if (currentConfig !== "CUSTOM") setConfig("CUSTOM"); }
+
+    // mode: gold / land / lakhs
+    function computeAssetValue(a) {
+      const mode = a.mode;
+      if (mode === "gold") return (Number(a.qty) || 0) * (Number(a.rate) || 0);
+      if (mode === "land") return (Number(a.qty) || 0) * (Number(a.rate) || 0);
+      if (mode === "lakhs") return (Number(a.valueL) || 0) * 100000;
+      return 0;
+    }
+
+    // Assets
+    let assets = [
+      { id: "gold", short: "Gold 90s", type: "gold", mode: "gold", qty: 90, rate: 96000, pctJ: 50 },
+      { id: "flat", short: "Apt (1)", type: "property", mode: "lakhs", valueL: 40, pctJ: 50 },
+      { id: "house", short: "House (1)", type: "property", mode: "lakhs", valueL: 80, pctJ: 50 },
+      { id: "land1", short: "Land 1700-A", type: "land", mode: "land", qty: 1700, rate: 900, pctJ: 50 },
+      { id: "land2", short: "Land 1700-B", type: "land", mode: "land", qty: 1700, rate: 900, pctJ: 50 }
+    ];
+
+    function renderAssets() {
+      const tbody = $("#assetRows").empty();
+      assets.forEach((a, i) => {
+        const iconClass =
+          a.type === "gold"
+            ? "icon-gold"
+            : a.type === "property"
+            ? "icon-flat"
+            : "icon-land";
+        const iconFa =
+          a.type === "gold"
+            ? "fa-ring"
+            : a.type === "property"
+            ? "fa-building"
+            : "fa-tree";
+
+        let helperText = "";
+        let rateCellHtml = "";
+
+        if (a.mode === "gold") {
+          helperText = "90s × rate/sov";
+          rateCellHtml = `
+            <div style="display:flex;align-items:center;gap:4px;">
+              <input class="rate-input" type="number" min="0" value="${Number(
+                a.rate || 0
+              )}" />
+            </div>
+          `;
+        } else if (a.mode === "land") {
+          helperText = "1700 sqft × rate";
+          rateCellHtml = `
+            <div style="display:flex;align-items:center;gap:4px;">
+              <input class="rate-input" type="number" min="0" value="${Number(
+                a.rate || 0
+              )}" />
+            </div>
+          `;
+        } else if (a.mode === "lakhs") {
+          helperText = "Value in Lakhs";
+          rateCellHtml = `
+            <div style="display:flex;align-items:center;gap:4px;">
+              <input class="valL-input" type="number" min="0" step="0.1" value="${Number(
+                a.valueL || 0
+              )}" />
+              <span style="font-size:10px;color:#6b7280;">L</span>
+            </div>
+          `;
+        }
+
+        const v = computeAssetValue(a);
+
+        const $tr = $(`
+          <tr data-idx="${i}">
+            <td>
+              <div class="asset-cell">
+                <div class="asset-icon ${iconClass}">
+                  <i class="fa-solid ${iconFa}"></i>
+                </div>
+                <div style="min-width:0;flex:1">
+                  <div class="asset-name">${esc(a.short)}</div>
+                  <div class="muted" style="font-size:9px;">${helperText}</div>
+                  <div style="margin-top:6px; display:flex; gap:6px;">
+                    <button class="btn btn-ghost assign-jai" title="Assign item fully to Jai" style="padding:4px 6px;font-size:10px;"><i class="fa-solid fa-arrow-left"></i> J</button>
+                    <button class="btn btn-ghost assign-jaish" title="Assign item fully to JS" style="padding:4px 6px;font-size:10px;"><i class="fa-solid fa-arrow-right"></i> JS</button>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>${rateCellHtml}</td>
+            <td>
+              <input class="pct-input" type="number" min="0" max="100" value="${Number(
+                a.pctJ
+              )}" />
+            </td>
+            <td>
+              <input class="pct-s" type="number" min="0" max="100" value="${
+                100 - Number(a.pctJ)
+              }" />
+            </td>
+            <td style="text-align:right;font-weight:800;">${fmtMoney(v)}</td>
+          </tr>
+        `);
+
+        tbody.append($tr);
+      });
+      attachEvents();
+    }
+
+    function attachEvents(){
+      $("#assetRows tr[data-idx]").each(function(){
+        const idx = $(this).data('idx'); if(String(idx).includes('-val')) return;
+        const realIdx = Number(idx); const $row = $(this);
+        const $pj = $row.find('.pct-input'); const $ps = $row.find('.pct-s'); const $rate = $row.find('.rate-input'); const $valL = $row.find('.valL-input');
+        if($rate.length){ $rate.off('input').on('input', function(){ assets[realIdx].rate = Number(this.value||0); markCustomConfig(); recalc(); }); }
+        if($valL.length){ $valL.off('input').on('input', function(){ assets[realIdx].valueL = Number(this.value||0); markCustomConfig(); recalc(); }); }
+        $pj.off('input').on('input', function(){ let v = Math.max(0,Math.min(100,Number(this.value||0))); this.value = v; $ps.val(100-v); assets[realIdx].pctJ = v; markCustomConfig(); recalc(); });
+        $ps.off('input').on('input', function(){ let v = Math.max(0,Math.min(100,Number(this.value||0))); this.value = v; $pj.val(100-v); assets[realIdx].pctJ = 100-v; markCustomConfig(); recalc(); });
+        $row.find('.assign-jai').off('click').on('click', ()=>{ assets[realIdx].pctJ = 100; renderAssets(); recalc(); setConfig('CUSTOM'); });
+        $row.find('.assign-jaish').off('click').on('click', ()=>{ assets[realIdx].pctJ = 0; renderAssets(); recalc(); setConfig('CUSTOM'); });
+      });
+    }
+
+    function recalc() {
+      const includeHistoric = $('#includeHistoric').is(':checked');
+      const ratePct = parseFloat($('#inflationRate').val()) || 0; const r = ratePct/100;
+      const grow = (base, yrs) => { base = Number(base)||0; yrs = Number(yrs)||0; return base * Math.pow(1+r, yrs); };
+
+      const baseParents = parseFloat($('#baseParents').val())||0;
+      const baseJaiLoan = parseFloat($('#baseJaiLoan').val())||0;
+      const baseMedical = parseFloat($('#baseMedical').val())||0;
+      const baseApt = parseFloat($('#baseApt').val())||0;
+      const baseHouse = parseFloat($('#baseHouse').val())||0;
+
+      const yearsParents = parseFloat($('#yearsParents').val())||0;
+      const yearsJaiLoan = parseFloat($('#yearsJaiLoan').val())||0;
+      const yearsMedical = parseFloat($('#yearsMedical').val())||0;
+      const yearsApt = parseFloat($('#yearsApt').val())||0;
+      const yearsHouse = parseFloat($('#yearsHouse').val())||0;
+
+      const marriageParents = includeHistoric ? grow(baseParents, yearsParents) : 0;
+      const marriageJai = includeHistoric ? grow(baseJaiLoan, yearsJaiLoan) : 0;
+      const medicalJai = includeHistoric ? grow(baseMedical, yearsMedical) : 0;
+      const aptHelp = includeHistoric ? grow(baseApt, yearsApt) : 0;
+      const houseHelp = includeHistoric ? grow(baseHouse, yearsHouse) : 0;
+
+      const historicTotalAll = marriageParents + marriageJai + medicalJai + aptHelp + houseHelp;
+
+      $('#todayParents').text(fmtMoney(marriageParents));
+      $('#todayJaiLoan').text(fmtMoney(marriageJai));
+      $('#todayMedical').text(fmtMoney(medicalJai));
+      $('#todayApt').text(fmtMoney(aptHelp));
+      $('#todayHouse').text(fmtMoney(houseHelp));
+
+      let pool = 0, jaiAssets = 0, jaishAssets = 0;
+      assets.forEach((a, idx) => {
+        const v = computeAssetValue(a);
+        pool += v;
+        const vJ = v * ((Number(a.pctJ)||0)/100);
+        const vS = v - vJ;
+        jaiAssets += vJ; jaishAssets += vS;
+        const $rows = $("#assetRows tr[data-idx='"+idx+"'], #assetRows tr[data-idx='"+idx+"-val']");
+        $rows.find('.val-display-line').text(fmtMoney(v));
+      });
+
+      // build lists
+      let jaiAssetLines = assets.map(a=>({t:a.short,v: computeAssetValue(a)*((Number(a.pctJ)||0)/100)}));
+      let jaishAssetLines = assets.map(a=>({t:a.short,v: computeAssetValue(a)*(1-((Number(a.pctJ)||0)/100))}));
+
+      let jaiListHtml = jaiAssetLines.map(it=>`<li><span>${esc(it.t)}</span><span>+ ${fmtMoney(it.v)}</span></li>`).join(''); if(!jaiListHtml) jaiListHtml = '<li><span class="muted">(none)</span><span></span></li>';
+      jaiListHtml += `<li class="historic-header"><span>Historic</span><span></span></li>`;
+      if(includeHistoric){
+        jaiListHtml += `
+          <li class="historic-item"><span>Parents</span><span>+ ${fmtMoney(marriageParents)}</span></li>
+          <li class="historic-item"><span>Jai loan</span><span>- ${fmtMoney(marriageJai)}</span></li>
+          <li class="historic-item"><span>Medical</span><span>- ${fmtMoney(medicalJai)}</span></li>
+          <li class="historic-item"><span>Apt help</span><span>- ${fmtMoney(aptHelp)}</span></li>
+          <li class="historic-item"><span>House 2012</span><span>- ${fmtMoney(houseHelp)}</span></li>`;
+      } else {
+        jaiListHtml += `<li class="muted"><span>Historic items muted</span><span></span></li>`;
+      }
+
+      let jaishListHtml = jaishAssetLines.map(it=>`<li><span>${esc(it.t)}</span><span>+ ${fmtMoney(it.v)}</span></li>`).join(''); if(!jaishListHtml) jaishListHtml = '<li><span class="muted">(none)</span><span></span></li>';
+      jaishListHtml += `<li class="historic-header"><span>Historic</span><span></span></li>`;
+      if(includeHistoric){
+        jaishListHtml += `
+          <li class="historic-item"><span>Parents</span><span>+ ${fmtMoney(marriageParents)}</span></li>
+          <li class="historic-item"><span>Jai loan</span><span>+ ${fmtMoney(marriageJai)}</span></li>
+          <li class="historic-item"><span>Medical</span><span>+ ${fmtMoney(0)}</span></li>
+          <li class="historic-item"><span>Apt help</span><span>+ ${fmtMoney(0)}</span></li>
+          <li class="historic-item"><span>House 2012</span><span>+ ${fmtMoney(0)}</span></li>`;
+      } else {
+        jaishListHtml += `<li class="muted"><span>Historic items muted</span><span></span></li>`;
+      }
+
+      $('#jaiList').html(jaiListHtml); $('#jaishList').html(jaishListHtml);
+
+      // KPIs
+      $('#pool').text(fmtMoney(pool)); $('#jaiGross').text(fmtMoney(jaiAssets)); $('#jaishGross').text(fmtMoney(jaishAssets));
+
+      const jaiHistoric = 0 - marriageJai - medicalJai - aptHelp - houseHelp;
+      const jaishHistoric = marriageParents + marriageJai;
+
+      const jaiTotal = jaiAssets + jaiHistoric; const jaishTotal = jaishAssets + jaishHistoric;
+      $('#jaiNet').text(fmtMoney(jaiTotal)); $('#jaishNet').text(fmtMoney(jaishTotal)); $('#jaiNetKpi').text(fmtMoney(jaiTotal)); $('#jaishNetKpi').text(fmtMoney(jaishTotal));
+
+      const combinedNet = jaiTotal + jaishTotal; const totalForPct = combinedNet||1; const jaiPctNet = (jaiTotal/totalForPct)*100; const jaishPctNet = (jaishTotal/totalForPct)*100;
+      $('#shareKpi').text(jaiPctNet.toFixed(1)+"% / "+jaishPctNet.toFixed(1)+"%"); $('#jaiPct').text(jaiPctNet.toFixed(1)+"%"); $('#jaishPct').text(jaishPctNet.toFixed(1)+"%");
+      $('#jaiCard .share-fill-jai').css('width', Math.max(0,Math.min(100,jaiPctNet)) + '%'); $('#jaishCard .share-fill-jaish').css('width', Math.max(0,Math.min(100,jaishPctNet)) + '%');
+
+      // Historic explanation
+      $('#famAdj').text(fmtMoney(historicTotalAll));
+      $('#famAdjBreak').html(`
+        <div>• Parents (credit JS): ${fmtMoney(marriageParents)}</div>
+        <div>• Jai loan (−Jai, +JS): ${fmtMoney(marriageJai)}</div>
+        <div>• Medical (−Jai): ${fmtMoney(medicalJai)}</div>
+        <div>• Apt help (−Jai): ${fmtMoney(aptHelp)}</div>
+        <div>• House 2012 (−Jai): ${fmtMoney(houseHelp)}</div>
+        <div class="muted" style="margin-top:2px;">Rate used: ${ratePct.toFixed(2)}% p.a.</div>
+      `);
+
+      // Also populate the END historic summary card
+      $('#famAdjEnd').text(fmtMoney(historicTotalAll)); $('#famRateUsed').text(ratePct.toFixed(2) + '% p.a.');
+      $('#famAdjBreakEnd').html(`
+        <div>• Parents: ${fmtMoney(marriageParents)}</div>
+        <div>• Jai loan: ${fmtMoney(marriageJai)}</div>
+        <div>• Medical: ${fmtMoney(medicalJai)}</div>
+        <div>• Apt help: ${fmtMoney(aptHelp)}</div>
+        <div>• House 2012: ${fmtMoney(houseHelp)}</div>
+      `);
+
+      // --- Transfer calculations (separate cards) ---
+      // Asset transfer: cash to equalize asset-only holdings. Positive => Jai -> JS
+      const assetDiff = jaiAssets - jaishAssets; const assetTransfer = assetDiff / 2;
+      // Historic transfer: net owed to JS (positive => Jai -> JS). We treat JaiHistoric as negative values for Jai debits
+      const histNet = jaishHistoric - Math.abs(jaiHistoric); const historicTransfer = histNet;
+
+      function fmtTransferLine(amount){
+        if(!isFinite(amount) || Math.abs(amount) < 1) return '<span class="muted">No transfer</span>';
+        if(amount > 0) return `<i class="fa-solid fa-arrow-right" style="color:var(--blue-main);margin-right:6px"></i> J → JS ${fmtMoney(amount)}`;
+        return `<i class="fa-solid fa-arrow-left" style="color:var(--green-main);margin-right:6px"></i> JS → J ${fmtMoney(Math.abs(amount))}`;
+      }
+
+      $('#assetTransferKpi').html(fmtTransferLine(assetTransfer));
+      $('#historicTransferKpi').html(fmtTransferLine(historicTransfer));
+
+      $('#lastUpdated').text(new Date().toLocaleString());
+    }
+
+    // Presets and actions (same handlers as before)
+    function applyPreset(code){ if(!code) return; assets.forEach(a=>a.pctJ=100); const gold = assets.find(a=>a.id==='gold'); const flat = assets.find(a=>a.id==='flat'); const land1 = assets.find(a=>a.id==='land1'); const land2 = assets.find(a=>a.id==='land2'); if(code==='J1'){ if(gold) gold.pctJ=0 } else if(code==='J2'){ if(gold) gold.pctJ=0; if(flat) flat.pctJ=0 } else if(code==='J3'){ if(gold) gold.pctJ=0; if(land1) land1.pctJ=0 } else if(code==='J4'){ if(gold) gold.pctJ=0; if(land1) land1.pctJ=0; if(land2) land2.pctJ=0 } else if(code==='J5'){ if(gold) gold.pctJ=50; if(flat) flat.pctJ=0 } else if(code==='J6'){ if(gold) gold.pctJ=50; if(land1) land1.pctJ=0 } else if(code==='J7'){ if(gold) gold.pctJ=50; if(land1) land1.pctJ=0; if(land2) land2.pctJ=0 } renderAssets(); recalc(); }
+
+    $(document).on('click','#assignAllJai', ()=>{ assets.forEach(a=>a.pctJ=100); renderAssets(); recalc(); setConfig('Q2'); });
+    $(document).on('click','#assignAllJaish', ()=>{ assets.forEach(a=>a.pctJ=0); renderAssets(); recalc(); setConfig('Q3'); });
+    $(document).on('click','#shuffle', ()=>{ assets.forEach(a=>{ if(a.type==='gold') a.pctJ = Math.floor(Math.random()*101); else a.pctJ = Math.random()<0.5?0:100 }); renderAssets(); recalc(); setConfig('CUSTOM'); });
+    $(document).on('click', '.preset-btn', function(){ const code = $(this).data('code'); if(!code) return; applyPreset(code); setConfig(code); });
+
+    // Historic change triggers
+    $(document).on('input change', '#inflationRate, .hist-base, .hist-years, #includeHistoric', function(){ markCustomConfig(); recalc(); });
+
+    // Print
+    $(document).on('click', '#btnPrint', function(){ window.print(); });
+
+    $(document).ready(function(){ renderAssets(); recalc(); setConfig('CUSTOM'); });
+  </script>
+</body>
+</html>
 
