@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Metals API • Inventory Valuation Lab</title>
+
+<!-- libs -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet"/>
+
+<style>
+
+/* =====================================================
+   UBUNTU REGRESSION STYLE THEME (same as your pizza lab)
+===================================================== */
+
+html,body{
+  height:100%;
+  margin:0;
+  scroll-behavior:smooth;
+  overflow-y:scroll;
+}
+
+body{
+  font-family:'Ubuntu',sans-serif;
+  background:linear-gradient(180deg,#2c001e,#3d0f2e);
+  color:#fff;
+
+  /* slide snap */
+  scroll-snap-type:y mandatory;
+}
+
+/* slide sections */
+.section{
+  min-height:100vh;
+  padding:40px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  scroll-snap-align:start;
+  animation:slideDown .6s ease;
+}
+
+@keyframes slideDown{
+  from{opacity:0;transform:translateY(-40px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* card */
+.card{
+  background:#fff;
+  color:#222;
+  border-radius:14px;
+  padding:26px;
+  width:92%;
+  max-width:950px;
+  box-shadow:0 14px 35px rgba(0,0,0,.35);
+}
+
+h2{
+  margin:0 0 14px;
+}
+
+/* button */
+.btn{
+  background:#e95420;
+  border:none;
+  color:#fff;
+  padding:10px 18px;
+  border-radius:8px;
+  font-weight:600;
+  cursor:pointer;
+}
+.btn:hover{background:#ff6a30}
+
+.muted{color:#666;font-size:14px}
+
+input{
+  padding:8px;
+  border-radius:6px;
+  border:1px solid #ccc;
+  width:120px;
+}
+
+.result{
+  font-size:20px;
+  font-weight:700;
+  color:#e95420;
+  margin-top:6px;
+}
+
+pre{
+  background:#f4f4f4;
+  padding:10px;
+  border-radius:8px;
+  max-height:180px;
+  overflow:auto;
+}
+
+/* grid */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+/* side dots */
+#navDots{
+  position:fixed;
+  right:18px;
+  top:50%;
+  transform:translateY(-50%);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  z-index:999;
+}
+.dot{
+  width:11px;
+  height:11px;
+  border-radius:50%;
+  background:#bbb;
+  cursor:pointer;
+}
+.dot.active{
+  background:#e95420;
+  transform:scale(1.4);
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="navDots"></div>
+
+<!-- =====================================================
+   STEP 1
+===================================================== -->
+
+<section class="section">
+  <div class="card">
+    <h2>🔎 Step 1 — Identify the API Source</h2>
+
+    <ul class="muted">
+      <li>Find provider documentation</li>
+      <li>Check endpoint URLs</li>
+      <li>Confirm JSON response format</li>
+      <li>Test simple endpoint like /symbols</li>
+    </ul>
+
+    <p><b>Demo endpoint:</b><br>
+      <code>https://api.gold-api.com/symbols</code>
+    </p>
+
+    <button class="btn nextBtn">Next → Data Format</button>
+  </div>
+</section>
+
+<!-- =====================================================
+   STEP 2
+===================================================== -->
+
+<section class="section">
+  <div class="card">
+    <h2>📦 Step 2 — Understand JSON Response</h2>
+
+<pre>{
+  "success": true,
+  "base": "USD",
+  "rates": {
+    "XAU": 2350.21,
+    "XAG": 29.42
+  }
+}</pre>
+
+    <p class="muted">
+      XAU → Gold price per troy ounce<br>
+      XAG → Silver price per troy ounce
+    </p>
+
+    <button class="btn nextBtn">Next → Conversion Logic</button>
+  </div>
+</section>
+
+<!-- =====================================================
+   STEP 3
+===================================================== -->
+
+<section class="section">
+  <div class="card">
+    <h2>🧮 Step 3 — Convert & Calculate</h2>
+
+    <p class="muted">
+      1 troy ounce = <b>31.1034768 grams</b>
+    </p>
+
+<pre>
+price_per_gram = price_per_oz / 31.1034768
+
+gold_value = price_per_gram × grams × purity
+
+purity (22K) = 22 / 24
+</pre>
+
+    <button class="btn nextBtn">Next → Live Demo</button>
+  </div>
+</section>
+
+<!-- =====================================================
+   STEP 4 DEMO
+===================================================== -->
+
+<section class="section">
+  <div class="card">
+
+    <h2>💎 Step 4 — Live Inventory Calculator</h2>
+
+    <div style="display:flex;gap:10px;margin-bottom:12px">
+      Gold grams:
+      <input id="goldGrams" type="number" value="500">
+
+      Silver grams:
+      <input id="silverGrams" type="number" value="2000">
+
+      <button id="calcBtn" class="btn">Calculate</button>
+    </div>
+
+    <div class="grid">
+
+      <div>
+        <p class="muted">API Output</p>
+        <pre id="apiOutput">—</pre>
+      </div>
+
+      <div>
+        Gold / g : <div id="goldPerGram" class="result">—</div>
+        Silver / g : <div id="silverPerGram" class="result">—</div>
+        Total Value : <div id="totalValue" class="result">—</div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+<!-- =====================================================
+   SCRIPT
+===================================================== -->
+
+<script>
+
+/* =====================================================
+   SLIDE NAVIGATION (same as regression page)
+===================================================== */
+
+$(function(){
+
+  const sections=$(".section");
+  const dots=$("#navDots");
+  let index=0,busy=false;
+
+  sections.each((i)=>dots.append(`<div class="dot" data-i="${i}"></div>`));
+
+  function go(i){
+    if(i<0||i>=sections.length)return;
+    busy=true; index=i;
+
+    $("html,body").animate({
+      scrollTop:sections.eq(i).offset().top
+    },600,()=>busy=false);
+
+    $(".dot").removeClass("active").eq(i).addClass("active");
+  }
+
+  go(0);
+
+  $(".nextBtn").click(()=>go(index+1));
+
+  $(window).on("wheel",(e)=>{
+    if(busy)return;
+    e.originalEvent.deltaY>0?go(index+1):go(index-1);
+  });
+
+  $(document).on("keydown",(e)=>{
+    if(e.key==="ArrowDown")go(index+1);
+    if(e.key==="ArrowUp")go(index-1);
+  });
+
+  $(document).on("click",".dot",function(){
+    go($(this).data("i"));
+  });
+
+});
+
+
+/* =====================================================
+   METALS API LOGIC
+===================================================== */
+
+const ozToGram=31.1034768;
+const symbolsUrl='https://api.gold-api.com/symbols';
+const priceUrl=(s)=>`https://api.gold-api.com/price?symbol=${s}`;
+
+function show(data){
+  $("#apiOutput").text(JSON.stringify(data,null,2));
+}
+
+$.getJSON(symbolsUrl).done(show);
+
+$("#calcBtn").click(function(){
+
+  const g=parseFloat($("#goldGrams").val())||0;
+  const s=parseFloat($("#silverGrams").val())||0;
+
+  $.when(
+    $.getJSON(priceUrl('XAU')),
+    $.getJSON(priceUrl('XAG'))
+  ).done(function(gold,silver){
+
+    const goldOz=gold[0].price||gold[0].rates?.XAU;
+    const silverOz=silver[0].price||silver[0].rates?.XAG;
+
+    const goldGram=goldOz/ozToGram;
+    const silverGram=silverOz/ozToGram;
+
+    const goldVal=goldGram*g*(22/24);
+    const silverVal=silverGram*s;
+
+    $("#goldPerGram").text(goldGram.toFixed(4)+" USD/g");
+    $("#silverPerGram").text(silverGram.toFixed(4)+" USD/g");
+    $("#totalValue").text((goldVal+silverVal).toFixed(2)+" USD");
+
+    show({gold:gold[0],silver:silver[0]});
+  });
+
+});
+
+</script>
+
+</body>
+</html>
