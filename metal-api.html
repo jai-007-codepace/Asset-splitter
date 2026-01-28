@@ -1,142 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Metals Inventory Calculator-Rev01</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>💎 Metals API Lab — Step by Step</title>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600;700&display=swap" rel="stylesheet"/>
 
 <style>
+
+/* ========= UBUNTU THEME ========= */
+
 body{
   font-family:'Ubuntu',sans-serif;
-  background:linear-gradient(135deg,#2c001e,#3d0f2e);
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  height:100vh;
   margin:0;
+  background:linear-gradient(180deg,#2c001e,#3d0f2e);
+  color:#fff;
+}
+
+.wrapper{
+  max-width:1000px;
+  margin:auto;
+  padding:30px;
+  display:grid;
+  gap:18px;
 }
 
 .card{
   background:#fff;
   color:#222;
-  padding:30px;
   border-radius:14px;
-  width:420px;
-  box-shadow:0 20px 40px rgba(0,0,0,.4);
+  padding:22px;
+  box-shadow:0 14px 35px rgba(0,0,0,.35);
 }
 
 h2{
-  margin-top:0;
-  text-align:center;
+  margin:0 0 10px;
 }
 
-.row{
-  margin-bottom:14px;
-}
-
-input{
-  width:100%;
-  padding:8px;
-  border-radius:6px;
-  border:1px solid #ccc;
-}
-
-button{
-  width:100%;
+pre{
+  background:#f4f4f4;
   padding:10px;
-  background:#e95420;
-  border:none;
-  color:#fff;
-  font-weight:600;
   border-radius:8px;
-  cursor:pointer;
-}
-
-button:hover{
-  background:#ff6a30;
-}
-
-.result{
-  margin-top:16px;
-  font-weight:700;
-  color:#e95420;
+  font-size:13px;
 }
 
 .small{
   font-size:13px;
   color:#666;
 }
+
+.row{
+  display:flex;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+input{
+  flex:1;
+  padding:8px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+button{
+  background:#e95420;
+  border:none;
+  color:#fff;
+  padding:10px 18px;
+  border-radius:8px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+/* ========= TABLE ========= */
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:12px;
+}
+
+th,td{
+  padding:10px;
+  text-align:center;
+  border-bottom:1px solid #ddd;
+}
+
+th{
+  background:#f3f4f6;
+}
+
+.totalRow{
+  font-weight:900;
+  font-size:18px;
+  color:#e95420;
+}
+
+.title{
+  text-align:center;
+  font-size:24px;
+  font-weight:900;
+}
+
+/* ===== neat labeled inputs ===== */
+
+.formGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin-bottom:14px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.field label{
+  font-weight:700;
+  font-size:14px;
+}
+
+.field label span{
+  font-weight:400;
+  color:#666;
+  font-size:12px;
+}
+
+.field input{
+  padding:9px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+
 </style>
 </head>
 
+
+
 <body>
+
+<div class="wrapper">
+
+<div class="title">💎 Metals Inventory Calculator Lab</div>
+
+
+
+<!-- ================================================= -->
+<!-- STEP 1 -->
+<!-- ================================================= -->
+
+<div class="card">
+<h2>🔹 Step 1 — API Route</h2>
+
+<pre>
+Gold   → https://api.gold-api.com/price/XAU
+Silver → https://api.gold-api.com/price/XAG
+</pre>
+
+<div class="small">
+We call these endpoints to fetch live market prices.
+</div>
+</div>
+
+
+
+<!-- ================================================= -->
+<!-- STEP 2 -->
+<!-- ================================================= -->
+
+<div class="card">
+<h2>🔹 Step 2 — JSON Data Format</h2>
+
+<pre>{
+  "name":"Gold",
+  "price": 2350.21,
+  "symbol":"XAU"
+}
+</pre>
+
+<div class="small">
+price = value for <b>1 troy ounce</b>
+</div>
+</div>
+
+
+
+<!-- ================================================= -->
+<!-- STEP 3 -->
+<!-- ================================================= -->
+
+<div class="card">
+<h2>🔹 Step 3 — Unit Conversion Logic</h2>
+
+<pre>
+1 troy ounce = 31.1034768 grams
+
+price_per_gram = price_per_ounce ÷ 31.1034768
+value = grams × price_per_gram
+</pre>
+
+<div class="small">
+Without dividing, price becomes 31× higher ❌
+</div>
+</div>
+
+
+
+<!-- ================================================= -->
+<!-- STEP 4 -->
+<!-- ================================================= -->
 
 <div class="card">
 
-  <h2>💎 Metals Inventory Value</h2>
+<h2>🔹 Step 4 — Fetch Prices & Calculate Inventory</h2>
 
-  <div class="row">
-    Gold (grams)
-    <input id="gold" type="number" value="500">
+<div class="formGrid">
+
+  <div class="field">
+    <label>Gold <span>(grams)</span></label>
+    <input id="goldGrams" type="number" value="100">
   </div>
 
-  <div class="row">
-    Silver (grams)
-    <input id="silver" type="number" value="2000">
+  <div class="field">
+    <label>Silver <span>(grams)</span></label>
+    <input id="silverGrams" type="number" value="500">
   </div>
-
-  <button id="calc">Fetch Rates & Calculate</button>
-
-  <div class="result" id="output">—</div>
-
-  <div class="small" id="rates"></div>
 
 </div>
 
 
+<button id="calcBtn">Fetch & Calculate</button>
+
+
+<table id="resultTable" style="display:none">
+<thead>
+<tr>
+  <th>Metal</th>
+  <th>Quantity (g)</th>
+  <th>Price / g (₹)</th>
+  <th>Value (₹)</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+  <td>Gold</td>
+  <td id="gQty"></td>
+  <td id="gRate"></td>
+  <td id="gVal"></td>
+</tr>
+
+<tr>
+  <td>Silver</td>
+  <td id="sQty"></td>
+  <td id="sRate"></td>
+  <td id="sVal"></td>
+</tr>
+
+<tr class="totalRow">
+  <td colspan="3">Total Value</td>
+  <td id="totalVal"></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
+
+
+</div>
+
+
+
 <script>
 
-/* ===== CONFIG ===== */
+/* ========= CONFIG ========= */
+
 const OZ_TO_GRAM = 31.1034768;
-const priceUrl = s => `https://api.gold-api.com/price?symbol=${s}`;
+const USD_TO_INR = 83;
 
-/* ===== CALCULATE ===== */
-$("#calc").click(function(){
 
-  const goldGrams = parseFloat($("#gold").val()) || 0;
-  const silverGrams = parseFloat($("#silver").val()) || 0;
+/* ========= STEP 4 LOGIC ========= */
 
-  $("#output").text("Fetching live price...");
+$("#calcBtn").click(function(){
+
+  const gQty = parseFloat($("#goldGrams").val()) || 0;
+  const sQty = parseFloat($("#silverGrams").val()) || 0;
 
   $.when(
-    $.getJSON(priceUrl("XAU")),
-    $.getJSON(priceUrl("XAG"))
-  ).done(function(gold,silver){
+    $.getJSON("https://api.gold-api.com/price/XAU"),
+    $.getJSON("https://api.gold-api.com/price/XAG")
+  )
+  .done(function(g,s){
 
-    const goldOz = gold[0].price;
-    const silverOz = silver[0].price;
+    const goldPerGram   = (g[0].price / OZ_TO_GRAM) * USD_TO_INR;
+    const silverPerGram = (s[0].price / OZ_TO_GRAM) * USD_TO_INR;
 
-    const goldPerGram = goldOz / OZ_TO_GRAM;
-    const silverPerGram = silverOz / OZ_TO_GRAM;
+    const gVal = gQty * goldPerGram;
+    const sVal = sQty * silverPerGram;
+    const total = gVal + sVal;
 
-    const goldValue = goldPerGram * goldGrams * (22/24); // 22k purity
-    const silverValue = silverPerGram * silverGrams;
+    $("#gQty").text(gQty);
+    $("#sQty").text(sQty);
 
-    const total = goldValue + silverValue;
+    $("#gRate").text(Math.round(goldPerGram));
+    $("#sRate").text(Math.round(silverPerGram));
 
-    $("#output").text("Total Value: $" + total.toFixed(2));
+    $("#gVal").text(Math.round(gVal).toLocaleString());
+    $("#sVal").text(Math.round(sVal).toLocaleString());
 
-    $("#rates").html(`
-      Gold/g : $${goldPerGram.toFixed(2)} <br>
-      Silver/g : $${silverPerGram.toFixed(2)}
-    `);
+    $("#totalVal").text(Math.round(total).toLocaleString());
 
-  }).fail(()=>{
-    $("#output").text("API failed. Try again.");
+    $("#resultTable").show();
+
   });
 
 });
