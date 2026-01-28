@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Pizza Demand Prediction • Linear Regression Lab</title>
+
+  <!-- libs -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ================= UBUNTU THEME ================= */
+
+    body {
+      font-family: 'Ubuntu', sans-serif;
+      margin: 0;
+      background: linear-gradient(180deg, #2c001e, #3d0f2e);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-weight: 600;
+    }
+
+    .section {
+      min-height: 100vh;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      animation: slideDown .7s ease;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* cards */
+
+    .card {
+      background: #ffffff;
+      color: #222;
+      border-radius: 14px;
+      padding: 24px;
+      width: 90%;
+      max-width: 900px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
+    }
+
+    /* buttons */
+
+    .btn {
+      background: #e95420;
+      border: none;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    .btn:hover {
+      background: #ff6a30;
+    }
+
+    /* table */
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 6px;
+      text-align: center;
+    }
+
+    th {
+      background: #f4f4f4;
+    }
+
+    #chart {
+      height: 380px;
+    }
+
+    #results {
+      max-height: 160px;
+      overflow: auto;
+      font-size: 12px;
+      margin-top: 12px;
+    }
+
+    .inputBox {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    input {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 140px;
+      font-size: 14px;
+    }
+
+    .output {
+      margin-top: 16px;
+      font-weight: 700;
+      font-size: 20px;
+      color: #e95420;
+    }
+
+    .next {
+      position: absolute;
+      bottom: 20px;
+      font-size: 13px;
+      opacity: .7;
+    }
+
+    @keyframes blinkBest {
+      0%   { background: #c6f6d5; }
+      50%  { background: #34d399; }
+      100% { background: #c6f6d5; }
+    }
+
+    .bestBlink {
+      animation: blinkBest 0.9s infinite;
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ================= STEP 1 ================= -->
+
+  <section class="section" id="step1">
+    <div class="card">
+      <h2>📊 Step 1 — Sample Training Data</h2>
+      <table id="dataTable"></table>
+      <button class="btn" onclick="scrollToStep('#step2')">
+        Continue → Train Model
+      </button>
+    </div>
+    <div class="next">scroll ↓</div>
+  </section>
+
+
+  <!-- ================= STEP 2 ================= -->
+
+  <section class="section" id="step2">
+    <div class="card">
+      <h2>📈 Step 2 — Linear Regression Training</h2>
+
+      <div style="display:flex; gap:20px; align-items:flex-start">
+
+        <div style="flex:65%">
+          <div id="chart"></div>
+          <div id="equation" style="margin-top:10px;font-weight:600;text-align:center;"></div>
+          <button id="trainBtn" class="btn">Start Training</button>
+        </div>
+
+        <div style="flex:35%">
+          <table id="results"></table>
+        </div>
+
+      </div>
+
+      <button class="btn" onclick="scrollToStep('#step3')">
+        Next → Prediction
+      </button>
+    </div>
+  </section>
+
+
+  <!-- ================= STEP 3 ================= -->
+
+  <section class="section" id="step3">
+    <div class="card" style="text-align:center">
+      <h2>🤖 Step 3 — Predict Pizza Demand</h2>
+
+      <div class="inputBox">
+        Crowd Attendance:
+        <input id="crowdInput" type="number" placeholder="e.g. 17000" />
+        <button class="btn" onclick="predictNow()">Predict</button>
+      </div>
+
+      <div class="output" id="prediction">—</div>
+    </div>
+  </section>
+
+
+  <!-- ================= SCRIPT ================= -->
+
+  <script>
+
+    /* ================= DATA ================= */
+
+    const crowd = [5000, 8000, 10000, 12000, 15000, 18000, 20000, 22000, 25000, 28000];
+    const pizzas = [820, 1280, 1550, 1820, 2240, 2600, 2890, 3150, 3520, 3900];
+
+    let trials = [];
+    let chart, bestA = 0, bestB = 0, bestIdx = 0;
+
+
+    /* ================= HELPERS ================= */
+
+    const predict = (a, b, x) => a * x + b;
+
+    function mse(a, b) {
+      let s = 0;
+      for (let i = 0; i < crowd.length; i++) {
+        let d = predict(a, b, crowd[i]) - pizzas[i];
+        s += d * d;
+      }
+      return s / crowd.length;
+    }
+
+    function scrollToStep(id) {
+      document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+    }
+
+
+    /* ================= GENERATE TRIALS ================= */
+
+    function generateTrials() {
+      trials = [];
+
+      for (let i = 0; i < 12; i++) {
+        trials.push({
+          a: +(0.05 + Math.random() * 0.15).toFixed(3),
+          b: Math.floor(Math.random() * 400)
+        });
+      }
+
+      const bestGuess = { a: 0.14, b: 100 };
+
+      const midIndex = 6 + Math.floor(Math.random() * 9);
+      trials.splice(midIndex, 0, bestGuess);
+    }
+
+
+    /* ================= BUILD TABLE ================= */
+
+    let table = "<tr><th>Crowd</th><th>Pizzas Sold</th></tr>";
+
+    crowd.forEach((c, i) => {
+      table += `<tr><td>${c}</td><td>${pizzas[i]}</td></tr>`;
+    });
+
+    $("#dataTable").html(table);
+
+
+    /* ================= CHART ================= */
+
+    $(function () {
+
+      chart = new ApexCharts(document.querySelector("#chart"), {
+        chart: {
+          animations: { enabled: false },
+          toolbar: { show: false },
+          zoom: { enabled: false }
+        },
+
+        series: [
+          {
+            name: 'Observed',
+            type: 'scatter',
+            data: crowd.map((c, i) => [c, pizzas[i]])
+          },
+          {
+            name: 'Model',
+            type: 'line',
+            data: []
+          }
+        ],
+
+        markers: { size: [6, 0] },
+        stroke: { width: [0, 3] },
+
+        xaxis: {
+          min: 0,
+          max: 30000,
+          tickAmount: 6,
+          title: { text: 'Crowd Attendance' },
+          labels: { formatter: v => Math.round(v / 1000) + 'k' }
+        },
+
+        yaxis: {
+          min: 0,
+          max: 5000,
+          tickAmount: 6,
+          title: { text: 'Pizzas Sold' },
+          labels: { formatter: v => Math.round(v) }
+        }
+      });
+
+      chart.render();
+    });
+
+
+    /* ================= TRAINING ================= */
+
+    $("#trainBtn").click(function () {
+
+      generateTrials();
+
+      $("#results").html("<tr><th>Trial</th><th>a</th><th>b</th><th>MSE</th></tr>");
+
+      let i = 0, best = Infinity;
+
+      function step() {
+
+        if (i >= trials.length) {
+
+          let bestLine = [];
+          for (let x = 0; x <= 30000; x += 1000)
+            bestLine.push([x, predict(bestA, bestB, x)]);
+
+          chart.updateSeries([
+            chart.w.config.series[0],
+            { name: 'Model',type: 'line', data: bestLine, stroke: { width: 4 } }
+          ]);
+
+          $("#equation").text(`Best Model → y = ${bestA.toFixed(3)}x + ${bestB}`);
+
+          $("#results tr").removeClass("bestBlink");
+          $("#results tr").eq(bestIdx + 1).addClass("bestBlink");
+
+          return;
+        }
+
+        const { a, b } = trials[i];
+
+        let line = [];
+        for (let x = 0; x <= 30000; x += 1000)
+          line.push([x, predict(a, b, x)]);
+
+        chart.updateSeries([
+          chart.w.config.series[0],
+          {  name: 'Model',type: 'line', data: line }
+        ]);
+
+        let e = mse(a, b);
+
+$("#results").append(
+  `<tr>
+     <td>${i + 1}</td>
+     <td>${a}</td>
+     <td>${b}</td>
+     <td>
+       <a href="#" class="mseLink" data-a="${a}" data-b="${b}" style="color:#e95420;font-weight:700">
+         ${e.toFixed(1)}
+       </a>
+     </td>
+   </tr>`
+);
+
+
+        if (e < best) {
+          best = e;
+          bestA = a;
+          bestB = b;
+          bestIdx = i;
+        }
+
+        i++;
+        setTimeout(step, 600);
+      }
+
+      step();
+    });
+
+
+    /* ================= PREDICT ================= */
+
+    function predictNow() {
+      let c = parseFloat($("#crowdInput").val());
+      if (!c) return;
+
+      let p = predict(bestA, bestB, c);
+
+      $("#prediction").text("Estimated Pizzas Demand ≈ " + Math.round(p));
+    }
+    
+    /* ================= MSE POPUP LOGIC ================= */
+
+$(document).on("click", ".mseLink", function (ev) {
+  ev.preventDefault();
+
+  const a = parseFloat($(this).data("a"));
+  const b = parseFloat($(this).data("b"));
+
+  let rows = "";
+  let total = 0;
+
+  for (let i = 0; i < crowd.length; i++) {
+    const x = crowd[i];
+    const actual = pizzas[i];
+    const pred = predict(a, b, x);
+    const err = pred - actual;
+    const sq = err * err;
+
+    total += sq;
+
+    rows += `
+      <tr>
+        <td>${x}</td>
+        <td>${actual}</td>
+        <td>${pred.toFixed(1)}</td>
+        <td>${err.toFixed(1)}</td>
+        <td>${sq.toFixed(1)}</td>
+      </tr>
+    `;
+  }
+
+  const mseVal = (total / crowd.length).toFixed(2);
+
+  $("#mseContent").html(`
+    <p><b>Formula:</b> MSE = (1/n) × Σ (prediction − actual)²</p>
+
+    <table border="1" style="width:100%;border-collapse:collapse;text-align:center">
+      <tr>
+        <th>Crowd</th>
+        <th>Actual</th>
+        <th>Predicted</th>
+        <th>Error</th>
+        <th>Error²</th>
+      </tr>
+      ${rows}
+    </table>
+
+    <p style="margin-top:10px">
+      <b>Total Squared Error:</b> ${total.toFixed(2)} <br>
+      <b>MSE:</b> ${total.toFixed(2)} ÷ ${crowd.length} = ${mseVal}
+    </p>
+  `);
+
+  $("#mseDialog").css("display", "flex");
+});
+
+
+  </script>
+<!-- ================= MSE POPUP ================= -->
+<div id="mseDialog" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+">
+  <div style="
+    background:#fff;
+    color:#222;
+    padding:20px;
+    border-radius:12px;
+    width:90%;
+    max-width:650px;
+    max-height:70vh;
+    overflow:auto;
+    font-size:13px;
+  ">
+    <h3 style="margin-top:0">📐 MSE Calculation</h3>
+    <div id="mseContent"></div>
+    <button class="btn" onclick="$('#mseDialog').hide()">Close</button>
+  </div>
+</div>
+
+</body>
+</html>
